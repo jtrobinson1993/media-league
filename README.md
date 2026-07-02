@@ -1,15 +1,16 @@
-# 🎬 Movie League
+# 🎬 Media League
 
-An **easy-to-deploy** app for running a **Music League–style game with movies**.
+An **easy-to-deploy** app for running a **Music League–style game** — starting
+with **movies** (music and other media types planned).
 
-Instead of submitting songs, players submit **films** that best match a themed
-prompt — like _"favorite indie horror"_, _"a movie that made you cry"_, or
-_"best sci-fi from the '80s"_ — and then everyone votes. Points accumulate
-across rounds, and a champion is crowned.
+Players submit **films** that best match a themed prompt — like _"favorite indie
+horror"_, _"a movie that made you cry"_, or _"best sci-fi from the '80s"_ — and
+then everyone votes. Points accumulate across rounds, and a champion is crowned.
 
 Think of it as a film-buff party game — one deployment hosts many independent
-**communities**, each running their own **leagues**. The UI is meant to feel
-game-like: fluid, animated, and celebratory.
+**groups**, each running their own **leagues**. Each league has a media type
+(v1 ships **movies**; the architecture is built so **music** and others slot in
+later). The UI is meant to feel game-like: fluid, animated, and celebratory.
 
 > ⚠️ **Status: design agreed, pre-implementation.** This repo currently contains
 > the concept and the full design. The app itself is not built yet.
@@ -54,7 +55,7 @@ points across the league's rounds wins.
 - 🏆 Automatic tallying, per-league standings, and an animated **winner reveal**
 - 🎲 Optional **winner-picks-the-next-prompt** mode, with an animated randomizer
   breaking ties
-- 👥 **Multi-tenant**: many isolated communities, each running multiple leagues
+- 👥 **Multi-tenant**: many isolated groups, each running multiple leagues
 - 🔒 Username + password auth with **optional passkeys**; no email required
 - 🔔 **Web push**, an in-app notifications center, and **Slack/Discord webhooks**
 - 🐳 Easy deploy: one Docker Compose stack (app + Caddy auto-HTTPS), SQLite in a
