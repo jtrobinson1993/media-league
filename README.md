@@ -1,17 +1,20 @@
 # 🎬 Movie League
 
-A self-hostable app for running a **Music League–style game with movies**.
+An **easy-to-deploy** app for running a **Music League–style game with movies**.
 
 Instead of submitting songs, players submit **films** that best match a themed
 prompt — like _"favorite indie horror"_, _"a movie that made you cry"_, or
 _"best sci-fi from the '80s"_ — and then everyone votes. Points accumulate
-across rounds, and a champion is crowned at the end of the season.
+across rounds, and a champion is crowned.
 
-Think of it as a film-buff party game you host for your friends, entirely on
-your own server.
+Think of it as a film-buff party game — one deployment hosts many independent
+**communities**, each running their own **leagues**. The UI is meant to feel
+game-like: fluid, animated, and celebratory.
 
-> ⚠️ **Status: early / planning.** This repo currently contains the concept and
-> design. The app itself is not built yet — see the [Roadmap](#roadmap).
+> ⚠️ **Status: design agreed, pre-implementation.** This repo currently contains
+> the concept and the full design. The app itself is not built yet.
+> **See [SPEC.md](./SPEC.md) for the complete design spec** (the decisions below
+> are the friendly summary).
 
 ---
 
@@ -26,44 +29,38 @@ Each **round** flows through four phases:
 3. **Voting** — submissions are revealed anonymously and each player distributes
    a fixed pool of votes across the movies they like best (you can't vote for
    your own).
-4. **Results** — votes are tallied into points, the round winner is revealed,
-   and the season standings update.
+4. **Results** — votes are tallied into points, authorship is revealed, the
+   round winner is crowned, and the league standings update.
 
 Do this for as many rounds as you like. The player with the most accumulated
-points across the season wins the league.
+points across the league's rounds wins.
 
 ### Scoring
 
-- Each voter gets a fixed number of vote points per round.
-- They allocate those points across submissions (e.g. 5 to one film, 3 to
-  another, 2 to a third).
-- A submission's score for the round = the sum of points it received.
-- Season standings = the sum of a player's round scores.
+- Each round uses one of two voting engines, chosen by the league admin:
+  **point-pool** (allocate a budget of points across films; a per-film cap of 1
+  gives a "likes" feel) or **ranked** (rank your top K; positional weights).
+- A film's round score = the points it received; **standings** = the sum of a
+  player's round scores.
+- **Ties are allowed** — co-winners of a round, co-champions of a league.
 
 ---
 
-## Goals
+## Highlights
 
-- 🎥 Themed prompts and per-round movie submissions
-- 🗳️ Anonymous, weighted voting with an anti–self-vote rule
-- 🏆 Automatic point tallying and season-long standings
-- 👥 Multiple independent leagues on one instance
-- 🔒 Simple auth — no third-party accounts required
-- 🐳 Easy self-hosting, ideally one command
-- 💾 Simple, portable storage that's trivial to back up
+- 🎥 Themed prompts, one film per player, submitted via **TMDB** search (with a
+  free-text fallback) so films come with posters
+- 🗳️ Per-round **point-pool or ranked** voting, anonymous until the results reveal
+- 🏆 Automatic tallying, per-league standings, and an animated **winner reveal**
+- 🎲 Optional **winner-picks-the-next-prompt** mode, with an animated randomizer
+  breaking ties
+- 👥 **Multi-tenant**: many isolated communities, each running multiple leagues
+- 🔒 Username + password auth with **optional passkeys**; no email required
+- 🔔 **Web push**, an in-app notifications center, and **Slack/Discord webhooks**
+- 🐳 Easy deploy: one Docker Compose stack (app + Caddy auto-HTTPS), SQLite in a
+  volume, config via `.env`
 
----
-
-## Roadmap
-
-- [ ] Core data model (leagues, rounds, submissions, votes)
-- [ ] Auth & player accounts
-- [ ] Round lifecycle (prompt → submit → vote → results)
-- [ ] Voting + scoring engine
-- [ ] Season standings
-- [ ] Web UI
-- [ ] One-command self-hosting (Docker)
-- [ ] TMDB integration for movie search & posters
+See **[SPEC.md](./SPEC.md)** for the full design and rationale.
 
 ---
 
