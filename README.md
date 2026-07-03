@@ -56,6 +56,9 @@ points across the league's rounds wins.
 - 🎲 Optional **winner-picks-the-next-prompt** mode, with an animated randomizer
   breaking ties
 - 👥 **Multi-tenant**: many isolated groups, each running multiple leagues
+- 🎖️ **Player profiles & stats** plus a **coins** economy — earn coins by playing
+  and placing, spend them on cosmetic **avatar frames** (cosmetic-only, no
+  pay-to-win)
 - 🔒 Username + password auth with **optional passkeys**; no email required
 - 🔔 **Web push**, an in-app notifications center, and **Slack/Discord webhooks**
 - 🐳 Easy deploy: one Docker Compose stack (app + Caddy auto-HTTPS), SQLite in a

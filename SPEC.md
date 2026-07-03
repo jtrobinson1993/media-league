@@ -11,7 +11,7 @@ what we're building; the README is the friendly summary.
 > **v1 scope note:** We deliberately chose a **feature-complete v1** — every
 > feature below is in the first release, nothing deferred. This is an ambitious
 > first build; if it needs to be broken into phases later, the natural cut lines
-> are called out in [§16](#16-scope--phasing).
+> are called out in [§17](#17-scope--phasing).
 
 ---
 
@@ -266,7 +266,39 @@ Three channels:
    so pasting a Discord/Slack incoming-webhook URL yields nicely-rendered channel
    messages.
 
-## 15. Gameplay edge rules (locked defaults)
+## 15. Player profiles, standings & economy
+
+**Standings & history (per league):**
+- Live **standings leaderboard**.
+- Browsable **round archive** — open any past round to see the prompt, the
+  revealed submissions with authors, scores, and winner(s).
+
+**Player profiles & stats (global):**
+- Per-user profile page with stats: rounds played, wins, total/average scoring
+  points, submission history, and cross-league aggregates. One global identity
+  across all groups/leagues.
+
+**Coins (meta-currency — global, earned-only, cosmetic-only):**
+- A **separate currency from league scoring points**; one **global wallet** per
+  user. Buying cosmetics never affects standings.
+- **Earning, per round:** **+5 participation** (for submitting; adjustable —
+  confirm) plus a **podium bonus: 1st +30, 2nd +20, 3rd +10**. Ties reuse the
+  co-winner rule — everyone at a placement gets that placement's **full** coins
+  (no splitting). **No anti-farm guards** (deliberate — it's a free game).
+- Reward values are **instance-level constants the operator can tune via config**;
+  **not** settable by league admins (so no one can mint their own currency).
+
+**Cosmetics store (the sink):**
+- v1 ships **one cosmetic type — avatar frames** (a built-in, coin-priced set) to
+  prove the **earn → spend → equip** loop. More types (name colors, badges,
+  banners, titles) come later.
+- Modeled as a typed `CosmeticItem` (`type = "frame"` in v1) + a per-user
+  **inventory** + equipped selections, so new types need **no schema change**.
+- Cosmetics are purely cosmetic (no gameplay/scoring effect), attach to the
+  **global profile**, and show next to the user's name in rosters, reveals, and
+  standings.
+
+## 16. Gameplay edge rules (locked defaults)
 
 - Mid-league joiners start at 0 points and play from the next round.
 - Leaving/removal keeps your past submissions/points as history; you stop
@@ -274,7 +306,7 @@ Three channels:
 
 ---
 
-## 16. Scope & phasing
+## 17. Scope & phasing
 
 **v1 = everything above** (operator's explicit choice). If phasing becomes
 necessary, the natural deferral cut lines are: passkeys (ship password-only
@@ -285,12 +317,11 @@ onboarding + invites, admin-scheduled rounds, one-film TMDB/free-text
 submissions, pool voting, anonymous reveal + standings, in-app notifications,
 polling.
 
-## 17. Open questions (not yet decided)
+## 18. Open questions (not yet decided)
 
 - **Round content fields** beyond prompt text (optional description/rules?).
-- **Standings & history surfaces** — per-round history, past leagues, player
-  profiles/stats.
-- **Rate limiting / abuse** specifics (invite-link abuse, vote manipulation).
+- **Rate limiting** specifics (auth, invite links, vote endpoints). Note: coin
+  "farming" is deliberately *not* defended against (§15).
 - **TMDB resilience** — caching, attribution requirements, and behavior when the
   API is down (beyond the free-text fallback).
 - **Data retention / export / backups** beyond copying the SQLite volume.
