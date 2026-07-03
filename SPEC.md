@@ -317,11 +317,18 @@ onboarding + invites, admin-scheduled rounds, one-film TMDB/free-text
 submissions, pool voting, anonymous reveal + standings, in-app notifications,
 polling.
 
-## 18. Open questions (not yet decided)
+## 18. Minor decisions (defaults chosen)
 
-- **Round content fields** beyond prompt text (optional description/rules?).
-- **Rate limiting** specifics (auth, invite links, vote endpoints). Note: coin
-  "farming" is deliberately *not* defended against (§15).
-- **TMDB resilience** — caching, attribution requirements, and behavior when the
-  API is down (beyond the free-text fallback).
-- **Data retention / export / backups** beyond copying the SQLite volume.
+These were resolved with sensible defaults rather than deep discussion; revisit
+if needed:
+
+- **Round content fields:** a round's prompt is a required theme/title line plus
+  an **optional longer description/rules** field.
+- **Rate limiting:** apply `@fastify/rate-limit` to auth (login/register),
+  invite-link acceptance, submission, and voting endpoints (per-IP + per-user).
+  Coin "farming" is deliberately *not* defended against (§15).
+- **TMDB resilience:** briefly cache search results in SQLite; on TMDB
+  timeout/error, fall back to free-text entry; show the required TMDB attribution.
+- **Data retention/export:** state lives in the SQLite volume (backup = copy it,
+  as in `notes`). A per-league **CSV/JSON export** of results/standings is slated
+  just **after v1**.
