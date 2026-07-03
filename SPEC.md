@@ -1,8 +1,7 @@
 # Media League — Design Spec
 
 > **Naming:** the product is **Media League** (movies are the first media type;
-> music and others come later). The git repo is still named `movie-league` —
-> renaming the GitHub repo to `media-league` is pending operator confirmation.
+> music and others come later). Repo: `jtrobinson1993/media-league`.
 
 Status: **design agreed, pre-implementation.** This document captures the
 decisions made while stress-testing the concept. It is the source of truth for
@@ -160,6 +159,20 @@ Phases: **prompt → submission → voting → results.**
   at those times, and the admin can also advance or extend early/late.
 - Non-submission never blocks phase advance; the scheduler/admin advances
   regardless.
+- **Rounds may overlap (schedule-driven).** Each round's phase windows are
+  independent; if the admin schedules round N+1's submissions during round N's
+  voting, they overlap — no dead time between rounds. The league page shows every
+  active round with its own phase. *Winner-picks-next caveat:* round N+1's
+  submissions can't open before its prompt exists; if the chooser hasn't supplied
+  one by the scheduled start, authorship falls back to the admin (§9).
+- **Edits while open:** players may change their submission during the submission
+  window and revise their ballot (and notes) during the voting window. Everything
+  freezes at close.
+- **Degenerate rounds void automatically.** If **<2 submissions** exist when
+  voting would open, or **zero ballots** were cast at voting close, the round
+  resolves as **VOID**: no winner, no standings changes, no coins (not even
+  participation), archived greyed-out as "voided". In winner-picks-next mode the
+  next prompt falls back to the admin.
 
 ## 11. Submissions
 
@@ -213,6 +226,13 @@ votingConfig = {
   a tie is broken — by the animated random picker in §9.)
 - **Vote eligibility:** default **must have submitted to vote**
   (`requireSubmissionToVote = true`), **admin-configurable per league**.
+- **Full vote attribution at results:** the results screen shows each film's
+  total **and the per-voter breakdown** ("bob +5, cara +4"; for ranked, "bob
+  ranked you 1st"). Ballots are secret during voting, fully attributed at reveal.
+- **Voter notes:** while voting, a player may attach a short free-text note to
+  any item on their ballot ("watched this on my birthday, loved it!"). Notes are
+  **hidden until results**, then revealed **attributed**, alongside that voter's
+  points on the film.
 
 ## 13. Roles & permissions
 
@@ -227,8 +247,9 @@ Four roles:
   (invite/remove members, edit group settings) **+ moderation oversight** of the
   group's leagues (delete a league; reassign a league's admin). Does **not** run
   league gameplay (prompts, scheduling, voting config) unless also a league admin.
-  *(Co-group-admins assumed to follow the same promote/demote model as leagues —
-  confirm.)*
+  **Co-group-admins allowed** — same promote/demote model as leagues: the creator
+  is the first admin and can promote/demote other members; any group admin has
+  the full powers above.
 - **League admin(s)** — **co-admins allowed**; the creator is the first admin and
   can promote/demote other league members. Any admin runs the league: prompts,
   scheduling + manual override, voting config, and roster (remove players).
@@ -281,8 +302,9 @@ Three channels:
 **Coins (meta-currency — global, earned-only, cosmetic-only):**
 - A **separate currency from league scoring points**; one **global wallet** per
   user. Buying cosmetics never affects standings.
-- **Earning, per round:** **+5 participation** (for submitting; adjustable —
-  confirm) plus a **podium bonus: 1st +30, 2nd +20, 3rd +10**. Ties reuse the
+- **Earning, per round:** **+5 participation** (for submitting) plus a
+  **podium bonus: 1st +30, 2nd +20, 3rd +10**. Voided rounds pay nothing
+  (§10). Ties reuse the
   co-winner rule — everyone at a placement gets that placement's **full** coins
   (no splitting). **No anti-farm guards** (deliberate — it's a free game).
 - Reward values are **instance-level constants the operator can tune via config**;
