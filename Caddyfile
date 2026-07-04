@@ -1,0 +1,11 @@
+# Reverse-proxy + automatic HTTPS for Media League.
+#
+# APP_ORIGIN (from .env, e.g. https://league.yourdomain.com) is the only thing
+# to set. Caddy obtains and renews a Let's Encrypt certificate for that
+# hostname and proxies everything to the app container.
+#
+# Requirements: ports 80 + 443 reachable from the internet and the DNS A/AAAA
+# record for the hostname pointing at this host.
+{$APP_ORIGIN} {
+	reverse_proxy media-league:3000
+}

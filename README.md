@@ -12,10 +12,9 @@ Think of it as a film-buff party game — one deployment hosts many independent
 (v1 ships **movies**; the architecture is built so **music** and others slot in
 later). The UI is meant to feel game-like: fluid, animated, and celebratory.
 
-> ⚠️ **Status: design agreed, pre-implementation.** This repo currently contains
-> the concept and the full design. The app itself is not built yet.
-> **See [SPEC.md](./SPEC.md) for the complete design spec** (the decisions below
-> are the friendly summary).
+> 🚧 **Status: v1 implemented, pre-release.** Server + web app are built and
+> tested (see [BUILD.md](./BUILD.md) for the checklist); polish and e2e tests
+> are ongoing. **See [SPEC.md](./SPEC.md) for the complete design spec.**
 
 ---
 
@@ -65,6 +64,43 @@ points across the league's rounds wins.
   volume, config via `.env`
 
 See **[SPEC.md](./SPEC.md)** for the full design and rationale.
+
+---
+
+## Deploying
+
+Requirements: a host with Docker, a domain with an A record pointing at it,
+and ports 80/443 reachable.
+
+```bash
+git clone https://github.com/jtrobinson1993/media-league.git
+cd media-league
+cp .env.example .env    # set APP_ORIGIN (and ideally TMDB_API_KEY)
+docker compose up -d
+```
+
+Caddy is in the compose file, so HTTPS is automatic. All state lives in the
+`media-league-data` volume (a single SQLite database) — back up by copying it.
+
+**Pick the final hostname before anyone registers** — passkeys are bound to
+`APP_ORIGIN`.
+
+Set `OPERATOR_USERNAME` in `.env` to your username *before* you register to
+get the operator console (user management, manual password resets — there is
+no self-service reset by design).
+
+## Development
+
+```bash
+npm install
+npm run dev:server   # Fastify API on :3000
+npm run dev:web      # Vite dev server on :5173 (proxies /api)
+npm test             # vitest (server + shared)
+npm run typecheck
+```
+
+Monorepo layout: `shared/` (domain types) · `server/` (Fastify 5 +
+better-sqlite3, in-app round scheduler) · `web/` (Vue 3 + Vite + Tailwind v4).
 
 ---
 

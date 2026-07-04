@@ -1,0 +1,49 @@
+# Production compose for Media League.
+#
+# Caddy terminates HTTPS (automatic Let's Encrypt) and reverse-proxies to the
+# app; nothing but Caddy is exposed to the internet. Configure via .env
+# (copy .env.example), set APP_ORIGIN, then:
+#
+#   docker compose up -d              # pulls the published image
+#   docker compose pull && docker compose up -d   # release: newest image
+#
+# To run a locally-built image instead (dev/hacking):
+#   docker compose up -d --build
+services:
+  media-league:
+    image: ghcr.io/jtrobinson1993/media-league:${MEDIA_LEAGUE_TAG:-latest}
+    build: .
+    container_name: media-league
+    restart: unless-stopped
+    # No plaintext host port — Caddy fronts the app over HTTPS.
+    expose:
+      - '3000'
+    env_file:
+      - .env
+    environment:
+      # Must exactly match the URL you open the app at (passkeys bind to it).
+      APP_ORIGIN: ${APP_ORIGIN:-http://localhost:3000}
+    volumes:
+      - media-league-data:/data
+
+  caddy:
+    image: caddy:2
+    container_name: media-league-caddy
+    restart: unless-stopped
+    ports:
+      - '80:80'
+      - '443:443'
+      - '443:443/udp' # HTTP/3
+    environment:
+      APP_ORIGIN: ${APP_ORIGIN:-http://localhost:3000}
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy-data:/data
+      - caddy-config:/config
+    depends_on:
+      - media-league
+
+volumes:
+  media-league-data:
+  caddy-data:
+  caddy-config:
