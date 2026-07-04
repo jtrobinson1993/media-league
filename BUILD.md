@@ -17,8 +17,8 @@ Working document for the implementation loop. Check items off as they land.
 - [ ] Operator console API (reset credentials, suspend/ban, delete, stats)
 
 ## Milestone 3 — game core
-- [ ] Rounds: CRUD, schedule template, prompt queueing, winner-picks-next
-- [ ] In-app scheduler (phase transitions, void rules)
+- [x] Rounds: CRUD, schedule template, prompt queueing, winner-picks-next (chooser flow lands with scoring)
+- [x] In-app scheduler (phase transitions, void rules)
 - [ ] Submissions: MediaProvider interface, TMDB provider, free-text, dupes
 - [ ] Voting: pool + ranked engines, validation, notes, self-vote rules
 - [ ] Scoring: tallies, ties/co-winners, standings, round archive
