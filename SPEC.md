@@ -10,7 +10,7 @@ what we're building; the README is the friendly summary.
 > **v1 scope note:** We deliberately chose a **feature-complete v1** — every
 > feature below is in the first release, nothing deferred. This is an ambitious
 > first build; if it needs to be broken into phases later, the natural cut lines
-> are called out in [§17](#17-scope--phasing).
+> are called out in [§18](#18-scope--phasing).
 
 ---
 
@@ -75,9 +75,10 @@ Node ≥22. Mirrors `notes`.
   libraries**. `@vueuse/motion` / motion-v + GSAP remain **recommendations in
   this spec** for later, but are deliberately **out of the initial build** — the
   operator will design the game-feel animations themselves. Wherever this spec
-  refers to an "animated" moment (winner reveal, the random-picker wheel/plinko),
-  build it with a simple, easily-replaceable CSS effect as a placeholder, not a
-  library-driven one.
+  refers to an "animated" moment (e.g. the winner highlight on the results
+  screen), build it with a simple, easily-replaceable CSS effect as a
+  placeholder, not a library-driven one. (The tie-break randomizer has **no
+  visual at all** in v1 — see §9.)
 - **Tests:** vitest + playwright.
 - **Real-time:** **none** — clients use **lightweight polling**. WebSockets were
   considered and rejected for v1; the results reveal + winner randomizer play
@@ -146,9 +147,10 @@ leagues.
       supplies the **prompt text**.
     - If the chooser doesn't submit a prompt before the round's scheduled start,
       authorship **falls back to the admin** (never stalls).
-    - **Co-winner tie → the chooser is picked at random**, dramatized by an
-      **animated visual randomizer** (wheel spin / plinko / bingo pull). Admin
-      can override the pick. (Build as a reusable "pick-one-at-random" component.)
+    - **Co-winner tie → the chooser is picked at random.** In v1 there is **no
+      randomizer visual** — the app simply announces the selected chooser. An
+      animated visual randomizer (wheel spin / plinko / bingo pull) is a future
+      enhancement the operator will design. Admin can override the pick.
 
 ## 10. Round lifecycle & scheduling
 
@@ -320,7 +322,51 @@ Three channels:
   **global profile**, and show next to the user's name in rosters, reveals, and
   standings.
 
-## 16. Gameplay edge rules (locked defaults)
+## 16. UI & interaction design
+
+**Form factor:** **mobile-first design, full functional parity on desktop** — no
+platform-exclusive features. Desktop composes the same screens wider (e.g. nav
+tabs become a left sidebar).
+
+**Navigation:** a **3-tab bottom bar** — **Home** (your leagues + groups, with
+per-league "action needed" badges), **Notifications** (the in-app center, badge
+count), **Profile** (stats, wallet, store, settings). Groups → leagues → rounds
+are drill-in pages from Home; admin screens hang off the league/group pages they
+configure.
+
+**League page = timeline feed:** a vertical chronological feed, newest round on
+top — active rounds with phase, countdown, and one primary CTA ("Vote · 5h
+left"), past rounds below with their winners. Any round **needing the player's
+action pins above the feed** regardless of age. **Standings live behind a tab**
+on the league page.
+
+**Results screen = summary-first:** the full ranked table renders immediately,
+winner(s) celebrated on top; **tapping a row drills into that film's votes and
+voter notes** (full attribution, §12). A fancy winner-highlight animation on
+this screen is a **future enhancement** (CSS placeholder until the operator
+designs it). No step-through countdown reveal.
+
+**Ballot input:**
+- **Pool:** each film card gets **− / + steppers**; a **sticky budget bar**
+  shows points remaining ("8/10 spent"); overspend impossible, per-film cap
+  enforced live.
+- **Ranked:** **tap-to-rank** — tapping films assigns ①②③ in order, shown as
+  numbered badges on the cards; tapping a badge clears it. No drag-and-drop.
+
+**Theme:** **light + dark from day one, following the system setting.** Both
+themes keep the chrome quiet — poster art and celebration moments carry the
+energy — with a single accent color for CTAs, badges, and winner highlights.
+
+**Avatars (what store frames wrap):** three tiers —
+1. **Default:** initials on a colored disc (zero setup).
+2. **Built-in gallery:** curated, movie-flavored avatar set + background color.
+3. **Photo upload:** optional user image with crop/resize (blob storage, as in
+   `notes`' attachments). Uploads are **unmoderated by design** (§13) —
+   misbehavior is handled by removing the person.
+
+**Randomizer:** no visual in v1 (§9) — the winning selection is simply displayed.
+
+## 17. Gameplay edge rules (locked defaults)
 
 - Mid-league joiners start at 0 points and play from the next round.
 - Leaving/removal keeps your past submissions/points as history; you stop
@@ -328,7 +374,7 @@ Three channels:
 
 ---
 
-## 17. Scope & phasing
+## 18. Scope & phasing
 
 **v1 = everything above** (operator's explicit choice). If phasing becomes
 necessary, the natural deferral cut lines are: passkeys (ship password-only
@@ -339,7 +385,7 @@ onboarding + invites, admin-scheduled rounds, one-film TMDB/free-text
 submissions, pool voting, anonymous reveal + standings, in-app notifications,
 polling.
 
-## 18. Minor decisions (defaults chosen)
+## 19. Minor decisions (defaults chosen)
 
 These were resolved with sensible defaults rather than deep discussion; revisit
 if needed:
