@@ -14,7 +14,10 @@ import { defaultRegistry, type MediaRegistry } from './lib/media.js';
 import { registerVoteRoutes } from './routes/votes.js';
 import { registerProfileRoutes } from './routes/profile.js';
 import { registerAdminRoutes } from './routes/admin.js';
-import { setFinalizeHook } from './lib/roundLifecycle.js';
+import { setFinalizeHook, setTransitionHook } from './lib/roundLifecycle.js';
+import { handleTransition } from './lib/events.js';
+import { configurePush } from './lib/notifications.js';
+import { registerNotificationRoutes } from './routes/notifications.js';
 import { finalizeRound } from './lib/scoring.js';
 
 export interface AppContext {
@@ -61,9 +64,13 @@ export async function buildApp(ctx: AppContext): Promise<FastifyInstance> {
   registerVoteRoutes(app);
   registerProfileRoutes(app);
   registerAdminRoutes(app);
+  registerNotificationRoutes(app);
 
   // Scoring runs when the lifecycle finishes a round (SPEC §12/§15).
   setFinalizeHook((db, round) => finalizeRound(db, round, ctx.config.coinRewards));
+  // Transitions fan out to in-app notifications, web push, and webhooks (SPEC §14).
+  setTransitionHook(handleTransition);
+  configurePush(ctx.config);
 
   return app;
 }

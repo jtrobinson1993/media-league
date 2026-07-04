@@ -5,6 +5,7 @@ import { leagueRole, httpError } from '../lib/permissions.js';
 import { parseVotingConfig } from '../lib/votingConfig.js';
 import { getLeague } from './leagues.js';
 import { getRound, windowsFromTemplate, advanceRound, tickAll, type RoundRow } from '../lib/roundLifecycle.js';
+import { dispatchWebhooks } from '../lib/webhooks.js';
 
 function requireLeagueAdmin(db: FastifyInstance['ctx']['db'], leagueId: number, userId: number): void {
   if (leagueRole(db, leagueId, userId) !== 'admin') throw httpError(403, 'league admin required');
@@ -119,6 +120,13 @@ export function registerRoundRoutes(app: FastifyInstance): void {
       }
     });
     txn();
+    for (const r of created) {
+      dispatchWebhooks(db, league.id, 'round.created', {
+        leagueName: league.name,
+        roundNumber: r.number,
+        prompt: r.prompt_title,
+      });
+    }
     tickAll(db); // open immediately if the window has already started
     return { rounds: created.map((r) => roundJson(getRound(db, r.id)!)) };
   });

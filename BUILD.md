@@ -25,9 +25,9 @@ Working document for the implementation loop. Check items off as they land.
 - [x] Coins: ledger, participation +5, podium 30/20/10; store + frames
 
 ## Milestone 4 — notifications
-- [ ] In-app notification center (feed, read state, badges)
-- [ ] Web push (VAPID)
-- [ ] Outbound webhooks: generic/discord/slack, league events
+- [x] In-app notification center (feed, read state, badges)
+- [x] Web push (VAPID)
+- [x] Outbound webhooks: generic/discord/slack, league events
 
 ## Milestone 5 — web app
 - [ ] Auth screens; app shell (3-tab bottom bar, light/dark)

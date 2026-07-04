@@ -56,14 +56,14 @@ export function setFinalizeHook(hook: FinalizeHook): void {
   finalizeHook = hook;
 }
 
-const listeners: ((db: DB, ev: TransitionEvent) => void)[] = [];
-/** Notifications/webhooks subscribe to phase transitions. */
-export function onTransition(listener: (db: DB, ev: TransitionEvent) => void): void {
-  listeners.push(listener);
+let transitionHook: (db: DB, ev: TransitionEvent) => void = () => {};
+/** Notifications/webhooks hook into phase transitions (set once per app). */
+export function setTransitionHook(hook: (db: DB, ev: TransitionEvent) => void): void {
+  transitionHook = hook;
 }
 
 function emit(db: DB, ev: TransitionEvent): void {
-  for (const l of listeners) l(db, ev);
+  transitionHook(db, ev);
 }
 
 function setPhase(db: DB, round: RoundRow, to: RoundRow['phase']): void {
