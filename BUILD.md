@@ -14,7 +14,7 @@ Working document for the implementation loop. Check items off as they land.
 - [x] Passkeys (SimpleWebAuthn register/login)
 - [x] Groups: create, invites (standing + one-time), join, roles, co-admins
 - [x] Leagues: create, visibility, rosters, co-admins, league invite links
-- [ ] Operator console API (reset credentials, suspend/ban, delete, stats)
+- [x] Operator console API (reset credentials, suspend/ban, delete, stats)
 
 ## Milestone 3 — game core
 - [x] Rounds: CRUD, schedule template, prompt queueing, winner-picks-next (chooser flow lands with scoring)
@@ -22,7 +22,7 @@ Working document for the implementation loop. Check items off as they land.
 - [x] Submissions: MediaProvider interface, TMDB provider, free-text, dupes
 - [x] Voting: pool + ranked engines, validation, notes, self-vote rules
 - [x] Scoring: tallies, ties/co-winners, standings (archive UI later)
-- [x] Coins: ledger, participation +5, podium 30/20/10 (store + frames pending)
+- [x] Coins: ledger, participation +5, podium 30/20/10; store + frames
 
 ## Milestone 4 — notifications
 - [ ] In-app notification center (feed, read state, badges)
