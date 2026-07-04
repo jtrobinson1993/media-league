@@ -19,7 +19,7 @@ Working document for the implementation loop. Check items off as they land.
 ## Milestone 3 — game core
 - [x] Rounds: CRUD, schedule template, prompt queueing, winner-picks-next (chooser flow lands with scoring)
 - [x] In-app scheduler (phase transitions, void rules)
-- [ ] Submissions: MediaProvider interface, TMDB provider, free-text, dupes
+- [x] Submissions: MediaProvider interface, TMDB provider, free-text, dupes
 - [ ] Voting: pool + ranked engines, validation, notes, self-vote rules
 - [ ] Scoring: tallies, ties/co-winners, standings, round archive
 - [ ] Coins: ledger, participation +5, podium 30/20/10; store + frames

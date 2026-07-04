@@ -9,15 +9,19 @@ import { registerPasskeyRoutes } from './routes/passkeys.js';
 import { registerGroupRoutes } from './routes/groups.js';
 import { registerLeagueRoutes } from './routes/leagues.js';
 import { registerRoundRoutes } from './routes/rounds.js';
+import { registerSubmissionRoutes } from './routes/submissions.js';
+import { defaultRegistry, type MediaRegistry } from './lib/media.js';
 
 export interface AppContext {
   config: Config;
   db: DB;
+  /** Media providers by league mediaType; defaults from config (TMDB). */
+  media?: MediaRegistry;
 }
 
 declare module 'fastify' {
   interface FastifyInstance {
-    ctx: AppContext;
+    ctx: AppContext & { media: MediaRegistry };
   }
   interface FastifyRequest {
     user: SessionUser | null;
@@ -27,7 +31,7 @@ declare module 'fastify' {
 /** Build the Fastify app (no listen) — used by index.ts and tests. */
 export async function buildApp(ctx: AppContext): Promise<FastifyInstance> {
   const app = Fastify({ logger: process.env.NODE_ENV !== 'test' });
-  app.decorate('ctx', ctx);
+  app.decorate('ctx', { ...ctx, media: ctx.media ?? defaultRegistry(ctx.config) });
   app.decorateRequest('user', null);
 
   await app.register(cookie);
@@ -48,6 +52,7 @@ export async function buildApp(ctx: AppContext): Promise<FastifyInstance> {
   registerGroupRoutes(app);
   registerLeagueRoutes(app);
   registerRoundRoutes(app);
+  registerSubmissionRoutes(app);
 
   return app;
 }
