@@ -30,14 +30,14 @@ Working document for the implementation loop. Check items off as they land.
 - [x] Outbound webhooks: generic/discord/slack, league events
 
 ## Milestone 5 — web app
-- [ ] Auth screens; app shell (3-tab bottom bar, light/dark)
-- [ ] Home (leagues+groups, action badges), group page, guided empty states
-- [ ] League page (timeline feed, standings tab, info)
-- [ ] Submit flow (search → confirm card), ballot (steppers / tap-to-rank)
-- [ ] Results (summary table + drill-in votes/notes)
-- [ ] Profile: stats, avatar (initials/gallery/upload), store try-on grid
-- [ ] Admin: league settings, round scheduling form, invites, webhooks
-- [ ] Operator console UI
+- [x] Auth screens; app shell (3-tab bottom bar, light/dark)
+- [x] Home (leagues+groups, action badges), group page, guided empty states
+- [x] League page (timeline feed, standings tab, info)
+- [x] Submit flow (search → confirm card), ballot (steppers / tap-to-rank)
+- [x] Results (summary table + drill-in votes/notes)
+- [x] Profile: stats, avatar (initials/gallery; upload later), store try-on grid
+- [x] Admin: basic round creation + invites (full settings/webhooks UI later)
+- [x] Operator console UI
 
 ## Milestone 6 — ship
 - [ ] Playwright e2e happy path

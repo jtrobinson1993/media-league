@@ -1,4 +1,7 @@
 import Fastify, { type FastifyInstance } from 'fastify';
+import fastifyStatic from '@fastify/static';
+import { existsSync } from 'node:fs';
+import { resolve } from 'node:path';
 import cookie from '@fastify/cookie';
 import rateLimit from '@fastify/rate-limit';
 import type { Config } from './config.js';
@@ -71,6 +74,18 @@ export async function buildApp(ctx: AppContext): Promise<FastifyInstance> {
   // Transitions fan out to in-app notifications, web push, and webhooks (SPEC §14).
   setTransitionHook(handleTransition);
   configurePush(ctx.config);
+
+  // Production: serve the built SPA with an index.html fallback for routes.
+  const webDist = resolve(import.meta.dirname, '../../web/dist');
+  if (existsSync(webDist)) {
+    await app.register(fastifyStatic, { root: webDist });
+    app.setNotFoundHandler((req, reply) => {
+      if (req.method === 'GET' && !req.url.startsWith('/api/')) {
+        return reply.sendFile('index.html');
+      }
+      return reply.code(404).send({ error: 'not found' });
+    });
+  }
 
   return app;
 }
