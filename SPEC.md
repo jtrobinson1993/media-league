@@ -2,6 +2,8 @@
 
 > **Naming:** the product is **Media League** (movies are the first media type;
 > music and others come later). Repo: `jtrobinson1993/media-league`.
+> **License: AGPL-3.0-only** (aligned with the operator's `notes` app so code
+> can flow freely between the two projects).
 
 Status: **design agreed, pre-implementation.** This document captures the
 decisions made while stress-testing the concept. It is the source of truth for
@@ -145,6 +147,10 @@ leagues.
     - Round 1's prompt is always seeded by the admin.
     - The admin still defines each round's schedule/durations; the winner only
       supplies the **prompt text**.
+    - **Prompt queueing (both modes):** the admin may **pre-enter prompts for any
+      future rounds**. In winner-picks-next mode, admin-set prompts take
+      precedence — the winner chooses the prompt for the **next round that
+      doesn't already have one**.
     - If the chooser doesn't submit a prompt before the round's scheduled start,
       authorship **falls back to the admin** (never stalls).
     - **Co-winner tie → the chooser is picked at random.** In v1 there is **no
@@ -365,6 +371,37 @@ energy — with a single accent color for CTAs, badges, and winner highlights.
    misbehavior is handled by removing the person.
 
 **Randomizer:** no visual in v1 (§9) — the winning selection is simply displayed.
+
+**Submission flow:** prompt at top → type-ahead provider search (poster + title
++ year rows) → tapping a result shows a **confirm card** (big poster, year,
+subtitle) with [Submit this] — a beat that catches wrong-remake/wrong-year
+picks. After submitting, the screen shows your current pick with [Change] until
+the window closes. Free-text fallback is a quiet **"Can't find it?"** link under
+the search results.
+
+**Invites (group and league level, same model):**
+- A **standing invite link/code** per group/league — visible and shareable (share
+  sheet) by **any member**; an admin can **regenerate** it at any time, instantly
+  invalidating the old one.
+- **Admin-issued one-time/expiring invites** — TTL options (e.g. 24h / 7d) and an
+  optional use limit, for extra caution.
+
+**Round scheduling UX:** each league has a **schedule template** ("rounds start
+Fri 18:00 weekly; submissions 3 days, voting 3 days"). Creating a round — or
+bulk-adding several — auto-fills phase windows from the template and the
+previous round; **every date remains editable per round**. Prompts can be
+pre-entered for any future rounds (prompt queueing, §9).
+
+**Store/equip (Profile tab):** a single **try-on grid** — every frame (owned and
+unowned) rendered live around **your** avatar; wallet always visible. Tap for a
+full-size preview: owned → [Equip], unowned → [Buy · price] (disabled when coins
+are short). **Buying auto-equips.**
+
+**First-run/empty states:** guided empty states, **no wizard** — every empty
+surface teaches its next step in place: empty Home → "Create a group" / "Have an
+invite link?"; empty group → "Create your first league"; empty league (admin) →
+a 3-item checklist (set schedule template → add rounds + prompts → share the
+invite); empty league (player) → "Round 1 opens Friday". The UI is the tutorial.
 
 ## 17. Gameplay edge rules (locked defaults)
 

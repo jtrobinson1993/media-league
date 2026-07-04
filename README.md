@@ -70,4 +70,4 @@ See **[SPEC.md](./SPEC.md)** for the full design and rationale.
 
 ## License
 
-MIT — see [LICENSE](./LICENSE).
+AGPL-3.0-only — see [LICENSE](./LICENSE).
