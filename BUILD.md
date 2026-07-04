@@ -20,9 +20,9 @@ Working document for the implementation loop. Check items off as they land.
 - [x] Rounds: CRUD, schedule template, prompt queueing, winner-picks-next (chooser flow lands with scoring)
 - [x] In-app scheduler (phase transitions, void rules)
 - [x] Submissions: MediaProvider interface, TMDB provider, free-text, dupes
-- [ ] Voting: pool + ranked engines, validation, notes, self-vote rules
-- [ ] Scoring: tallies, ties/co-winners, standings, round archive
-- [ ] Coins: ledger, participation +5, podium 30/20/10; store + frames
+- [x] Voting: pool + ranked engines, validation, notes, self-vote rules
+- [x] Scoring: tallies, ties/co-winners, standings (archive UI later)
+- [x] Coins: ledger, participation +5, podium 30/20/10 (store + frames pending)
 
 ## Milestone 4 — notifications
 - [ ] In-app notification center (feed, read state, badges)
