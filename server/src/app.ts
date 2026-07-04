@@ -12,6 +12,8 @@ import { registerRoundRoutes } from './routes/rounds.js';
 import { registerSubmissionRoutes } from './routes/submissions.js';
 import { defaultRegistry, type MediaRegistry } from './lib/media.js';
 import { registerVoteRoutes } from './routes/votes.js';
+import { registerProfileRoutes } from './routes/profile.js';
+import { registerAdminRoutes } from './routes/admin.js';
 import { setFinalizeHook } from './lib/roundLifecycle.js';
 import { finalizeRound } from './lib/scoring.js';
 
@@ -57,6 +59,8 @@ export async function buildApp(ctx: AppContext): Promise<FastifyInstance> {
   registerRoundRoutes(app);
   registerSubmissionRoutes(app);
   registerVoteRoutes(app);
+  registerProfileRoutes(app);
+  registerAdminRoutes(app);
 
   // Scoring runs when the lifecycle finishes a round (SPEC §12/§15).
   setFinalizeHook((db, round) => finalizeRound(db, round, ctx.config.coinRewards));

@@ -209,6 +209,18 @@ const MIGRATIONS: string[] = [
     expires_at INTEGER NOT NULL
   );
   `,
+  /* v2: built-in avatar-frame catalog (SPEC §15 — v1 store = frames only).
+     `asset` is a CSS class rendered client-side; no binary assets. */ `
+  INSERT INTO cosmetic_items (id, type, name, price, asset) VALUES
+    ('frame.classic-gold',   'frame', 'Classic Gold',   100, 'frame-classic-gold'),
+    ('frame.silver-screen',  'frame', 'Silver Screen',   80, 'frame-silver-screen'),
+    ('frame.film-strip',     'frame', 'Film Strip',      60, 'frame-film-strip'),
+    ('frame.neon-marquee',   'frame', 'Neon Marquee',   150, 'frame-neon-marquee'),
+    ('frame.director-clap',  'frame', 'Director''s Clap', 120, 'frame-director-clap'),
+    ('frame.popcorn',        'frame', 'Popcorn',         40, 'frame-popcorn'),
+    ('frame.red-carpet',     'frame', 'Red Carpet',     200, 'frame-red-carpet'),
+    ('frame.cult-vhs',       'frame', 'Cult VHS',        90, 'frame-cult-vhs');
+  `,
 ];
 
 export function openDb(path: string): DB {
