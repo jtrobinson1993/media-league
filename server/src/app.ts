@@ -7,6 +7,7 @@ import { SESSION_COOKIE, getSessionUser, type SessionUser } from './auth/session
 import { registerAuthRoutes } from './routes/auth.js';
 import { registerPasskeyRoutes } from './routes/passkeys.js';
 import { registerGroupRoutes } from './routes/groups.js';
+import { registerLeagueRoutes } from './routes/leagues.js';
 
 export interface AppContext {
   config: Config;
@@ -44,6 +45,7 @@ export async function buildApp(ctx: AppContext): Promise<FastifyInstance> {
   registerAuthRoutes(app);
   registerPasskeyRoutes(app);
   registerGroupRoutes(app);
+  registerLeagueRoutes(app);
 
   return app;
 }

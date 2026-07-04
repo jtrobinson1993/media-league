@@ -13,7 +13,7 @@ Working document for the implementation loop. Check items off as they land.
 - [x] Sessions (cookie), register/login/logout (username+password, scrypt)
 - [x] Passkeys (SimpleWebAuthn register/login)
 - [x] Groups: create, invites (standing + one-time), join, roles, co-admins
-- [ ] Leagues: create, visibility, rosters, co-admins, league invite links
+- [x] Leagues: create, visibility, rosters, co-admins, league invite links
 - [ ] Operator console API (reset credentials, suspend/ban, delete, stats)
 
 ## Milestone 3 — game core
