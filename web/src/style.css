@@ -1,0 +1,6 @@
+@import 'tailwindcss';
+
+/* Quiet chrome in both themes (SPEC §16): near-neutral surfaces, one accent. */
+:root {
+  --accent: oklch(0.75 0.15 85); /* gold */
+}
