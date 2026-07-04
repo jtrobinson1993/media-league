@@ -5,6 +5,7 @@ import type { Config } from './config.js';
 import type { DB } from './db.js';
 import { SESSION_COOKIE, getSessionUser, type SessionUser } from './auth/sessions.js';
 import { registerAuthRoutes } from './routes/auth.js';
+import { registerPasskeyRoutes } from './routes/passkeys.js';
 
 export interface AppContext {
   config: Config;
@@ -40,6 +41,7 @@ export async function buildApp(ctx: AppContext): Promise<FastifyInstance> {
   app.get('/api/health', async () => ({ ok: true }));
 
   registerAuthRoutes(app);
+  registerPasskeyRoutes(app);
 
   return app;
 }
