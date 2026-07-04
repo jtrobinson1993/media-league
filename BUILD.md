@@ -10,7 +10,7 @@ Working document for the implementation loop. Check items off as they land.
 - [x] web: Vite + Vue 3 + Tailwind v4 shell that builds
 
 ## Milestone 2 — auth & tenancy
-- [ ] Sessions (cookie), register/login/logout (username+password, argon2/scrypt)
+- [x] Sessions (cookie), register/login/logout (username+password, scrypt)
 - [ ] Passkeys (SimpleWebAuthn register/login)
 - [ ] Groups: create, invites (standing + one-time), join, roles, co-admins
 - [ ] Leagues: create, visibility, rosters, co-admins, league invite links
