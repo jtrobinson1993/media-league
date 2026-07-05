@@ -5,6 +5,7 @@ import { api } from '../api';
 import { useSession } from '../stores/session';
 import { timeUntil, formatDate, PHASE_LABEL, PHASE_BADGE } from '../lib/format';
 import UserAvatar from '../components/UserAvatar.vue';
+import LeagueSettings from '../components/LeagueSettings.vue';
 
 const route = useRoute();
 const session = useSession();
@@ -170,9 +171,7 @@ onMounted(load);
           </button>
           <p class="mt-1 text-xs text-neutral-500">The link also onboards people who aren't in the group yet.</p>
         </div>
-        <p v-if="session.me && myRole === 'admin'" class="text-xs text-neutral-500">
-          More admin settings (voting config, webhooks, schedule template) are available via the API; UI coming.
-        </p>
+        <LeagueSettings v-if="myRole === 'admin'" :league-id="leagueId" @saved="load" />
       </div>
     </template>
   </div>
