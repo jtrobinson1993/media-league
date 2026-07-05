@@ -40,7 +40,7 @@ Working document for the implementation loop. Check items off as they land.
 - [x] Operator console UI
 
 ## Milestone 6 — ship
-- [ ] Playwright e2e happy path
+- [x] Playwright e2e happy path
 - [x] Dockerfile + docker-compose + Caddyfile + .env.example
 - [x] GitHub Actions: build + publish GHCR image
 - [x] README deploy docs

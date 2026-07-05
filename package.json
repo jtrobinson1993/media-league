@@ -16,12 +16,14 @@
     "dev:web": "npm run dev -w web",
     "start": "node server/dist/index.js",
     "test": "vitest run",
-    "test:watch": "vitest"
+    "test:watch": "vitest",
+    "e2e": "playwright test"
   },
   "engines": {
     "node": ">=22"
   },
   "devDependencies": {
+    "@playwright/test": "^1.61.1",
     "tsx": "^4.19.3",
     "vitest": "^4.1.8"
   }
