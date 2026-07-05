@@ -21,6 +21,7 @@ import { setFinalizeHook, setTransitionHook } from './lib/roundLifecycle.js';
 import { handleTransition } from './lib/events.js';
 import { configurePush } from './lib/notifications.js';
 import { registerNotificationRoutes } from './routes/notifications.js';
+import { registerExportRoutes } from './routes/export.js';
 import { finalizeRound } from './lib/scoring.js';
 
 export interface AppContext {
@@ -75,6 +76,7 @@ export async function buildApp(ctx: AppContext): Promise<FastifyInstance> {
   registerProfileRoutes(app);
   registerAdminRoutes(app);
   registerNotificationRoutes(app);
+  registerExportRoutes(app);
 
   // Scoring runs when the lifecycle finishes a round (SPEC §12/§15).
   setFinalizeHook((db, round) => finalizeRound(db, round, ctx.config.coinRewards));

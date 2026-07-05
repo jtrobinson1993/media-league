@@ -171,6 +171,14 @@ onMounted(load);
           </button>
           <p class="mt-1 text-xs text-neutral-500">The link also onboards people who aren't in the group yet.</p>
         </div>
+        <div class="rounded-xl border border-neutral-200 p-4 dark:border-neutral-800">
+          <p class="mb-2 font-semibold">Export</p>
+          <div class="flex gap-2">
+            <a :href="`/api/leagues/${leagueId}/export?format=csv`" class="rounded-lg border border-neutral-300 px-3 py-1.5 dark:border-neutral-700">⬇ CSV</a>
+            <a :href="`/api/leagues/${leagueId}/export`" class="rounded-lg border border-neutral-300 px-3 py-1.5 dark:border-neutral-700">⬇ JSON</a>
+          </div>
+          <p class="mt-1 text-xs text-neutral-500">Round results and standings for this league.</p>
+        </div>
         <LeagueSettings v-if="myRole === 'admin'" :league-id="leagueId" @saved="load" />
       </div>
     </template>
