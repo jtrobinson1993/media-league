@@ -45,6 +45,13 @@ export async function buildApp(ctx: AppContext): Promise<FastifyInstance> {
   app.decorate('ctx', { ...ctx, media: ctx.media ?? defaultRegistry(ctx.config) });
   app.decorateRequest('user', null);
 
+  // Raw image uploads (avatar photos), capped at 2 MB.
+  app.addContentTypeParser(
+    ['image/jpeg', 'image/png', 'image/webp'],
+    { parseAs: 'buffer', bodyLimit: 2 * 1024 * 1024 },
+    (_req, body, done) => done(null, body),
+  );
+
   await app.register(cookie);
   await app.register(rateLimit, { max: 300, timeWindow: '1 minute' });
 

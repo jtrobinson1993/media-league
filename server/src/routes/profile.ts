@@ -1,4 +1,6 @@
 import type { FastifyInstance } from 'fastify';
+import { mkdirSync, writeFileSync, existsSync, readFileSync } from 'node:fs';
+import { join } from 'node:path';
 import { requireUser } from '../app.js';
 import { httpError } from '../lib/permissions.js';
 
@@ -7,6 +9,10 @@ const GALLERY_IDS = new Set([
   'zombie', 'detective', 'astronaut', 'dinosaur',
 ]);
 const COLOR_RE = /^(auto|#[0-9a-fA-F]{6})$/;
+
+function avatarPath(dataDir: string, userId: number): string {
+  return join(dataDir, 'avatars', String(userId));
+}
 
 function parseAvatar(input: unknown): string | null {
   if (typeof input !== 'object' || input === null) return null;
@@ -20,7 +26,7 @@ function parseAvatar(input: unknown): string | null {
 }
 
 export function registerProfileRoutes(app: FastifyInstance): void {
-  const { db } = app.ctx;
+  const { db, config } = app.ctx;
 
   app.get('/api/me/profile', async (req) => {
     const user = requireUser(req);
@@ -51,7 +57,16 @@ export function registerProfileRoutes(app: FastifyInstance): void {
       vals.push(b.displayName?.trim() || null);
     }
     if (b.avatar !== undefined) {
-      const avatar = parseAvatar(b.avatar);
+      const kind = (b.avatar as { kind?: string } | null)?.kind;
+      let avatar: string | null;
+      if (kind === 'photo') {
+        // Only valid when a photo has been uploaded (SPEC §16 avatar tiers).
+        avatar = existsSync(avatarPath(config.dataDir, user.id) + '.meta')
+          ? JSON.stringify({ kind: 'photo' })
+          : null;
+      } else {
+        avatar = parseAvatar(b.avatar);
+      }
       if (!avatar) return reply.code(400).send({ error: 'bad avatar config' });
       sets.push('avatar = ?');
       vals.push(avatar);
@@ -98,6 +113,28 @@ export function registerProfileRoutes(app: FastifyInstance): void {
       },
       recentSubmissions: recent,
     };
+  });
+
+  // Avatar photo upload (SPEC §16 tier 3): raw image body, stored on disk.
+  app.put('/api/me/avatar-photo', async (req, reply) => {
+    const user = requireUser(req);
+    const mime = req.headers['content-type'] ?? '';
+    if (!Buffer.isBuffer(req.body)) return reply.code(415).send({ error: 'send a jpeg/png/webp body' });
+    mkdirSync(join(config.dataDir, 'avatars'), { recursive: true });
+    const path = avatarPath(config.dataDir, user.id);
+    writeFileSync(path, req.body);
+    writeFileSync(path + '.meta', mime);
+    db.prepare('UPDATE users SET avatar = ? WHERE id = ?').run(JSON.stringify({ kind: 'photo' }), user.id);
+    return { ok: true };
+  });
+
+  app.get<{ Params: { id: string } }>('/api/users/:id/avatar-photo', async (req, reply) => {
+    requireUser(req);
+    const path = avatarPath(config.dataDir, Number(req.params.id));
+    if (!existsSync(path)) return reply.code(404).send({ error: 'no photo' });
+    const mime = existsSync(path + '.meta') ? readFileSync(path + '.meta', 'utf8') : 'image/jpeg';
+    reply.header('cache-control', 'private, max-age=300');
+    return reply.type(mime).send(readFileSync(path));
   });
 
   // --- store (SPEC §16: one try-on grid; buying auto-equips) ---

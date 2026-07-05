@@ -31,6 +31,28 @@ async function load(): Promise<void> {
   passkeys.value = pk.passkeys;
 }
 
+const fileInput = ref<HTMLInputElement | null>(null);
+
+async function uploadPhoto(ev: Event): Promise<void> {
+  const file = (ev.target as HTMLInputElement).files?.[0];
+  if (!file) return;
+  error.value = '';
+  if (!['image/jpeg', 'image/png', 'image/webp'].includes(file.type)) {
+    error.value = 'use a jpeg, png, or webp image';
+    return;
+  }
+  if (file.size > 2 * 1024 * 1024) {
+    error.value = 'image must be under 2 MB';
+    return;
+  }
+  const res = await fetch('/api/me/avatar-photo', { method: 'PUT', headers: { 'content-type': file.type }, body: file });
+  if (!res.ok) {
+    error.value = 'upload failed';
+    return;
+  }
+  await load();
+}
+
 async function pickAvatar(id: string | null): Promise<void> {
   const avatar = id ? { kind: 'gallery', id, color: profile.value?.avatar.color ?? 'auto' } : { kind: 'initials', color: 'auto' };
   await api.patch('/api/me/profile', { avatar });
@@ -82,7 +104,7 @@ onMounted(load);
 <template>
   <div v-if="profile">
     <div class="flex items-center gap-4">
-      <UserAvatar :username="profile.username" :display-name="profile.displayName" :avatar="profile.avatar" :frame="store?.items.find((i) => i.id === profile!.equipped.frame)?.asset ?? null" size="lg" />
+      <UserAvatar :username="profile.username" :display-name="profile.displayName" :avatar="profile.avatar" :user-id="session.me?.id" :frame="store?.items.find((i) => i.id === profile!.equipped.frame)?.asset ?? null" size="lg" />
       <div>
         <h1 class="text-2xl font-bold">{{ profile.displayName || profile.username }}</h1>
         <p class="text-sm text-neutral-500">@{{ profile.username }} · 🪙 {{ profile.coins }}</p>
@@ -102,7 +124,13 @@ onMounted(load);
           {{ GALLERY_EMOJI[g] }}
         </button>
       </div>
-      <p class="mt-1 text-xs text-neutral-500">Photo upload coming soon.</p>
+      <div class="mt-2 flex items-center gap-2">
+        <button class="rounded-lg border border-neutral-300 px-3 py-1.5 text-xs dark:border-neutral-700" @click="fileInput?.click()">
+          📷 Upload a photo
+        </button>
+        <button v-if="profile.avatar.kind === 'photo'" class="text-xs text-neutral-500 underline" @click="pickAvatar(null)">use initials instead</button>
+        <input ref="fileInput" type="file" accept="image/jpeg,image/png,image/webp" class="hidden" @change="uploadPhoto" />
+      </div>
     </section>
 
     <!-- store: try-on grid (SPEC §16) -->
@@ -110,7 +138,7 @@ onMounted(load);
       <h2 class="mb-2 text-sm font-semibold uppercase tracking-wide text-neutral-500">Frames · 🪙 {{ profile.coins }}</h2>
       <div class="grid grid-cols-4 gap-3">
         <button v-for="item in store.items" :key="item.id" class="flex flex-col items-center gap-1 rounded-xl border border-neutral-200 p-2 hover:border-amber-400 dark:border-neutral-800" @click="buyOrEquip(item)">
-          <UserAvatar :username="profile.username" :display-name="profile.displayName" :avatar="profile.avatar" :frame="item.asset" size="md" />
+          <UserAvatar :username="profile.username" :display-name="profile.displayName" :avatar="profile.avatar" :user-id="session.me?.id" :frame="item.asset" size="md" />
           <span class="text-center text-[10px] leading-tight">{{ item.name }}</span>
           <span class="text-[10px] font-bold" :class="profile.equipped.frame === item.id ? 'text-emerald-600' : store.owned.includes(item.id) ? 'text-sky-600' : profile.coins >= item.price ? 'text-amber-600' : 'text-neutral-400'">
             {{ profile.equipped.frame === item.id ? '✓ equipped' : store.owned.includes(item.id) ? 'equip' : `🪙 ${item.price}` }}

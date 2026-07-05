@@ -8,8 +8,9 @@ const props = withDefaults(
     avatar?: { kind: string; id?: string; color?: string } | null;
     frame?: string | null; // cosmetic asset class
     size?: 'sm' | 'md' | 'lg';
+    userId?: number | null; // needed to load a photo avatar
   }>(),
-  { size: 'md', avatar: null, frame: null, displayName: null },
+  { size: 'md', avatar: null, frame: null, displayName: null, userId: null },
 );
 
 const GALLERY: Record<string, string> = {
@@ -45,7 +46,12 @@ const sizeClass = { sm: 'h-7 w-7 text-xs', md: 'h-10 w-10 text-sm', lg: 'h-20 w-
     :style="{ backgroundColor: bg }"
     :title="displayName || username"
   >
-    <span v-if="avatar?.kind === 'gallery' && avatar.id">{{ GALLERY[avatar.id] ?? '🎬' }}</span>
+    <img
+      v-if="avatar?.kind === 'photo' && userId"
+      :src="`/api/users/${userId}/avatar-photo`"
+      class="h-full w-full rounded-full object-cover"
+    />
+    <span v-else-if="avatar?.kind === 'gallery' && avatar.id">{{ GALLERY[avatar.id] ?? '🎬' }}</span>
     <span v-else>{{ initials }}</span>
   </div>
 </template>

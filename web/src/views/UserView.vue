@@ -23,7 +23,7 @@ onMounted(async () => {
   <div v-if="profile">
     <RouterLink to="/" class="text-sm text-neutral-500">← Home</RouterLink>
     <div class="mt-2 flex items-center gap-4">
-      <UserAvatar :username="profile.user.username" :display-name="profile.user.displayName" :avatar="profile.user.avatar" size="lg" />
+      <UserAvatar :username="profile.user.username" :display-name="profile.user.displayName" :avatar="profile.user.avatar" :user-id="profile.user.id" size="lg" />
       <div>
         <h1 class="text-2xl font-bold">{{ profile.user.displayName || profile.user.username }}</h1>
         <p class="text-sm text-neutral-500">@{{ profile.user.username }}</p>
