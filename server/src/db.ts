@@ -221,6 +221,10 @@ const MIGRATIONS: string[] = [
     ('frame.red-carpet',     'frame', 'Red Carpet',     200, 'frame-red-carpet'),
     ('frame.cult-vhs',       'frame', 'Cult VHS',        90, 'frame-cult-vhs');
   `,
+  /* v3: one-shot flags so closing-soon reminders (SPEC §14) send only once. */ `
+  ALTER TABLE rounds ADD COLUMN submit_reminder_sent INTEGER NOT NULL DEFAULT 0;
+  ALTER TABLE rounds ADD COLUMN vote_reminder_sent INTEGER NOT NULL DEFAULT 0;
+  `,
 ];
 
 export function openDb(path: string): DB {

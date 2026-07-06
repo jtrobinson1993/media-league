@@ -3,6 +3,8 @@ import type { TransitionEvent } from './roundLifecycle.js';
 import { notify, leagueMemberIds } from './notifications.js';
 import { dispatchWebhooks, type WebhookData } from './webhooks.js';
 
+const REMINDER_WINDOW_MS = 2 * 3_600_000; // "closes in 2 hours" (SPEC §14)
+
 /**
  * Fan a round phase transition out to in-app notifications, web push, and
  * league webhooks (SPEC §14). Registered as the lifecycle transition hook.
@@ -87,5 +89,58 @@ export function handleTransition(db: DB, ev: TransitionEvent): void {
     }
     default:
       break;
+  }
+}
+
+/**
+ * One-shot "closing soon" nudges (SPEC §14): sent once per phase when a round
+ * is within the reminder window, only to members who haven't acted yet.
+ * Called by the scheduler alongside tickAll.
+ */
+export function sendClosingReminders(db: DB, now = Date.now()): void {
+  const soonSubmitting = db
+    .prepare(
+      `SELECT r.*, l.name AS league_name FROM rounds r JOIN leagues l ON l.id = r.league_id
+       WHERE r.phase = 'submitting' AND r.submit_reminder_sent = 0
+         AND r.submit_close_at - ? BETWEEN 0 AND ?`,
+    )
+    .all(now, REMINDER_WINDOW_MS) as (TransitionEvent['round'] & { league_name: string })[];
+  for (const round of soonSubmitting) {
+    const laggards = db
+      .prepare(
+        `SELECT user_id FROM league_members WHERE league_id = ? AND status = 'active'
+           AND user_id NOT IN (SELECT user_id FROM submissions WHERE round_id = ?)`,
+      )
+      .all(round.league_id, round.id) as { user_id: number }[];
+    notify(db, laggards.map((l) => l.user_id), 'submissions.closing', {
+      title: `Submissions close soon: ${round.league_name}`,
+      body: round.prompt_title ?? undefined,
+      leagueId: round.league_id,
+      roundId: round.id,
+    });
+    db.prepare('UPDATE rounds SET submit_reminder_sent = 1 WHERE id = ?').run(round.id);
+  }
+
+  const soonVoting = db
+    .prepare(
+      `SELECT r.*, l.name AS league_name FROM rounds r JOIN leagues l ON l.id = r.league_id
+       WHERE r.phase = 'voting' AND r.vote_reminder_sent = 0
+         AND r.vote_close_at - ? BETWEEN 0 AND ?`,
+    )
+    .all(now, REMINDER_WINDOW_MS) as (TransitionEvent['round'] & { league_name: string })[];
+  for (const round of soonVoting) {
+    const laggards = db
+      .prepare(
+        `SELECT user_id FROM league_members WHERE league_id = ? AND status = 'active'
+           AND user_id NOT IN (SELECT DISTINCT voter_id FROM votes WHERE round_id = ?)`,
+      )
+      .all(round.league_id, round.id) as { user_id: number }[];
+    notify(db, laggards.map((l) => l.user_id), 'voting.closing', {
+      title: `Voting closes soon: ${round.league_name}`,
+      body: round.prompt_title ?? undefined,
+      leagueId: round.league_id,
+      roundId: round.id,
+    });
+    db.prepare('UPDATE rounds SET vote_reminder_sent = 1 WHERE id = ?').run(round.id);
   }
 }

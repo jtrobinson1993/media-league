@@ -40,7 +40,7 @@ describe('database schema', () => {
     const version = db
       .prepare('SELECT MAX(version) AS v FROM schema_migrations')
       .get() as { v: number };
-    expect(version.v).toBe(2);
+    expect(version.v).toBe(3);
   });
 });
 
